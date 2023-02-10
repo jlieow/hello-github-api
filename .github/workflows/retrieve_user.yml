@@ -10,24 +10,13 @@ jobs:
     steps:
       - name: Echo env
         run: |
-          echo "message: ${{ github.event.head_commit.message }}"
-          echo "actor: ${{ github.actor }}"
-          echo "sha: ${{ github.sha }}"
-          echo "triggering_actor: ${{ github.triggering_actor }}"
-          echo "actor_id: ${{ github.actor_id }}"
-          echo "ref: ${{ github.ref }}"
-          echo "GITHUB_SHA: ${GITHUB_SHA}"
-          echo "GITHUB_WORKFLOW_SHA: ${GITHUB_WORKFLOW_SHA}"
-          echo "GITHUB_EVENT_PATH: ${GITHUB_EVENT_PATH}"
           echo "Works. Tag is ${GITHUB_REF##*/}"
-          echo "Works. Tag is ${GITHUB_REF}"
-        shell: bash
-      - name: "Curl and get tags"
-        id: tag
-        run: |
-          tags=$(curl -i 'https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags' \
+          
+          tag=$(curl -i https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/} \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
-          echo $tags
+          echo "$tag" | jq -r '.object | "\(.url)"' | while read url ; do
+            echo "URL: $url"
+          done
         shell: bash
