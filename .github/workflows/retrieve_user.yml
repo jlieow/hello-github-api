@@ -11,12 +11,14 @@ jobs:
       - name: Echo env
         run: |
           echo "Works. Tag is ${GITHUB_REF##*/}"
+
+          tag_ref=${GITHUB_REF##*/}
           
-          tag=$(curl -i https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/} \
+          tag=$(curl -i https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/$tag_ref \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
-          echo "$tag" | jq -r '.object | "\(.url)"' | while read url ; do
+          echo $tag | jq -r '.object | "\(.url)"' | while read url ; do
             echo "URL: $url"
           done
         shell: bash
