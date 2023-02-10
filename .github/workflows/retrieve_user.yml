@@ -28,4 +28,7 @@ jobs:
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
+          tagger=$(echo $tag_annotations | jq -r '.tagger') 
+
+          echo "tagger: $tagger"
         shell: bash
