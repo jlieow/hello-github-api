@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get tagger block from tag annotations
+        id: tagger
         run: |
           echo "Tag: ${GITHUB_REF##*/}"
           
@@ -29,4 +30,11 @@ jobs:
           tagger_response=$(echo $tag_annotations | jq -r '.tagger') 
 
           echo "tagger_response: $tagger_response"
+
+          echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Get output from
+        run: |
+          echo "tagger is ${{ steps.tagger.outputs.tagger_response }}"
         shell: bash
