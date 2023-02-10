@@ -32,5 +32,6 @@ jobs:
       - name: "Extract data from tag: version, message, body"
         id: tag
         run: |
-          git tag --points-at ${{ github.sha }}
+          git fetch --tags --force
+          git tag --points-at ${{ github.sha }} -n300 | tail -n +2 | jq
         shell: bash
