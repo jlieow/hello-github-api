@@ -20,7 +20,11 @@ jobs:
 
           echo "Tag: $tag"
 
+          url=$( jq -r '.object | "\(.url)"' <<< "${content}" ) 
+
+          echo "url: $url"
+
           echo $tag | jq -r '.object | "\(.url)"' | while read url ; do
-            echo "URL: $url"
+            echo "dddd: $url"
           done
         shell: bash
