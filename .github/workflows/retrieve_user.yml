@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Echo env
         run: |
-          echo "\nmessage: $message"
-          echo "\nactor: $actor"
-          echo "\nactor_id: $actor_id"
+          echo "message: $message"
+          echo "actor: $actor"
+          echo "actor_id: $actor_id"
         shell: bash
