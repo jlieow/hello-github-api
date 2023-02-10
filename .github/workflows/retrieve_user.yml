@@ -11,10 +11,12 @@ jobs:
       message: ${{ github.event.head_commit.message }}
       actor: ${{ github.actor }}
       actactor_idor: ${{ github.actor_id }}
+      ref: ${{ github.ref }}
     steps:
       - name: Echo env
         run: |
           echo "message: $message"
           echo "actor: $actor"
           echo "actor_id: $actor_id"
+          echo "ref: $ref"
         shell: bash
