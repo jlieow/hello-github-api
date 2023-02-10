@@ -20,7 +20,7 @@ jobs:
 
           echo "Tag: $tag"
 
-          url=$( jq -r '.object | "\(.url)"' <<< "${content}" ) 
+          url=$(echo $tag | jq -r '.object | "\(.url)"') 
 
           echo "url: $url"
 
