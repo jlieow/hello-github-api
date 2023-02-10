@@ -28,3 +28,10 @@ jobs:
           echo "actor_id: $actor_id"
           echo "ref: $ref"
         shell: bash
+      - name: "Extract data from tag: version, message, body"
+        id: tag
+        run: |
+          git fetch --tags --force # Retrieve annotated tags. THIS TRICK REALLY HELPS
+          echo ::set-output name=subject::$(git for-each-ref $GITHUB_REF --format='%(contents:subject)')
+          # …
+        shell: bash
