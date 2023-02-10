@@ -18,6 +18,8 @@ jobs:
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
+          echo "Tag: $tag"
+
           echo $tag | jq -r '.object | "\(.url)"' | while read url ; do
             echo "URL: $url"
           done
