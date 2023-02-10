@@ -16,6 +16,7 @@ jobs:
       triggering_actor: ${{ github.triggering_actor }}
       actor_id: ${{ github.actor_id }}
       ref: ${{ github.ref }}
+      GITHUB_SHA: ${{ github.GITHUB_SHA }}
     steps:
       - name: Echo env
         run: |
@@ -27,11 +28,13 @@ jobs:
           echo "triggering_actor: $triggering_actor"
           echo "actor_id: $actor_id"
           echo "ref: $ref"
+          echo "GITHUB_SHA: $GITHUB_SHA"
         shell: bash
       - uses: actions/checkout@v3
       - name: "Extract data from tag: version, message, body"
         id: tag
         run: |
-          git fetch --tags --force
-          git tag --points-at ${{ github.sha }} -n300 | tail -n +2 | jq
+          git tag --points-at ${{ github.sha }} # Retrieve annotated tags. THIS TRICK REALLY HELPS
+          echo ::set-output name=subject::$(git for-each-ref $GITHUB_REF --format='%(contents:subject)')
+          # …
         shell: bash
