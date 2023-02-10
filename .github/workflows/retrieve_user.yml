@@ -28,6 +28,7 @@ jobs:
           echo "actor_id: $actor_id"
           echo "ref: $ref"
         shell: bash
+      - uses: actions/checkout@v3
       - name: "Extract data from tag: version, message, body"
         id: tag
         run: |
