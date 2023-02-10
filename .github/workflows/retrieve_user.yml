@@ -11,16 +11,14 @@ jobs:
       - name: Echo env
         run: |
           echo "message: ${{ github.event.head_commit.message }}"
-          echo "pusher: ${{ github.event.push.pusher }}"
-          echo "head_commit: ${{ github.event.push.head_commit }}"
-          echo "commits: ${{ github.event.push.commits }}"
           echo "actor: ${{ github.actor }}"
           echo "triggering_actor: ${{ github.triggering_actor }}"
           echo "actor_id: ${{ github.actor_id }}"
           echo "ref: ${{ github.ref }}"
-          echo "GITHUB_SHA: ${{ github.GITHUB_SHA }}"
-          echo "GITHUB_EVENT_PATH: ${{ github.GITHUB_EVENT_PATH }}"
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "GITHUB_EVENT_PATH: ${GITHUB_EVENT_PATH}"
           echo "Works. Tag is ${GITHUB_REF##*/}"
+          echo "Works. Tag is ${GITHUB_REF}"
         shell: bash
       - uses: actions/checkout@v3
       - name: "Extract data from tag: version, message, body"
