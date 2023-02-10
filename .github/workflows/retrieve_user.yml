@@ -33,7 +33,7 @@ jobs:
 
           # echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
           echo 'var<<EOF' >> $GITHUB_OUTPUT
-          echo "$tagger_response" >> $GITHUB_OUTPUT
+          echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
         shell: bash
 
