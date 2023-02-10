@@ -32,7 +32,5 @@ jobs:
       - name: "Extract data from tag: version, message, body"
         id: tag
         run: |
-          git fetch --tags --force # Retrieve annotated tags. THIS TRICK REALLY HELPS
-          echo ::set-output name=subject::$(git for-each-ref $GITHUB_REF --format='%(contents:subject)')
-          # …
+          git tag --points-at ${{ github.sha }}
         shell: bash
