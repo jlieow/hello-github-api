@@ -9,14 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     env:
       message: ${{ github.event.head_commit.message }}
+      pusher: ${{ github.event.push.pusher }}
+      head_commit: ${{ github.event.push.head_commit }}
+      commits: ${{ github.event.push.commits }}
       actor: ${{ github.actor }}
-      actactor_idor: ${{ github.actor_id }}
+      triggering_actor: ${{ github.triggering_actor }}
+      actor_id: ${{ github.actor_id }}
       ref: ${{ github.ref }}
     steps:
       - name: Echo env
         run: |
           echo "message: $message"
+          echo "pusher: $pusher"
+          echo "head_commit: $head_commit"
+          echo "commits: $commits"
           echo "actor: $actor"
+          echo "triggering_actor: $triggering_actor"
           echo "actor_id: $actor_id"
           echo "ref: $ref"
         shell: bash
