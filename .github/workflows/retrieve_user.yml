@@ -8,10 +8,17 @@ jobs:
   get_github_details:
     runs-on: ubuntu-latest
     env:
-      Message: ${{ github.event.head_commit.message }}
+      message: ${{ github.event.head_commit.message }}
+      head_commit: ${{ github.event.head_commit }}
+      event: ${{ github.event }}
+      actor: ${{ github.actor }}
+      actactor_idor: ${{ github.actor_id }}
     steps:
       - name: Echo env
         run: |
-          echo "message: "
-          echo $Message
+          echo "\nmessage: $message"
+          echo "\nhead_commit: $head_commit"
+          echo "\nevent: $event"
+          echo "\nactor: $actor"
+          echo "\nactor_id: $actor_id"
         shell: bash
