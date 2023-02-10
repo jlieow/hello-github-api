@@ -7,28 +7,20 @@ on:
 jobs:
   get_github_details:
     runs-on: ubuntu-latest
-    env:
-      message: ${{ github.event.head_commit.message }}
-      pusher: ${{ github.event.push.pusher }}
-      head_commit: ${{ github.event.push.head_commit }}
-      commits: ${{ github.event.push.commits }}
-      actor: ${{ github.actor }}
-      triggering_actor: ${{ github.triggering_actor }}
-      actor_id: ${{ github.actor_id }}
-      ref: ${{ github.ref }}
-      GITHUB_SHA: ${{ github.GITHUB_SHA }}
     steps:
       - name: Echo env
         run: |
-          echo "message: $message"
-          echo "pusher: $pusher"
-          echo "head_commit: $head_commit"
-          echo "commits: $commits"
-          echo "actor: $actor"
-          echo "triggering_actor: $triggering_actor"
-          echo "actor_id: $actor_id"
-          echo "ref: $ref"
-          echo "GITHUB_SHA: $GITHUB_SHA"
+          echo "message: ${{ github.event.head_commit.message }}"
+          echo "pusher: ${{ github.event.push.pusher }}"
+          echo "head_commit: ${{ github.event.push.head_commit }}"
+          echo "commits: ${{ github.event.push.commits }}"
+          echo "actor: ${{ github.actor }}"
+          echo "triggering_actor: ${{ github.triggering_actor }}"
+          echo "actor_id: ${{ github.actor_id }}"
+          echo "ref: ${{ github.ref }}"
+          echo "GITHUB_SHA: ${{ github.GITHUB_SHA }}"
+          echo "GITHUB_EVENT_PATH: ${{ github.GITHUB_EVENT_PATH }}"
+          echo "Works. Tag is ${GITHUB_REF##*/}"
         shell: bash
       - uses: actions/checkout@v3
       - name: "Extract data from tag: version, message, body"
