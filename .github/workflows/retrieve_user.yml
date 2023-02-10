@@ -1,0 +1,17 @@
+name: Get github commit details
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  get_github_details:
+    runs-on: ubuntu-latest
+    env:
+      Message: ${{ github.event.head_commit.message }}
+    steps:
+      - name: Echo env
+        run: |
+          echo "message: "
+          echo $Message
+        shell: bash
