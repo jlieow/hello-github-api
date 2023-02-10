@@ -8,19 +8,17 @@ jobs:
   get_github_details:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo env
+      - name: Get tagger block from tag annotations
         run: |
-          echo "Works. Tag is ${GITHUB_REF##*/}"
-
-          tag_ref=${GITHUB_REF##*/}
+          echo "Tag: ${GITHUB_REF##*/}"
           
-          tag=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
+          tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
-          echo "Tag: $tag"
+          echo "tag_response: $tag_response"
 
-          url=$(echo $tag | jq -r '.object | "\(.url)"') 
+          url=$(echo $tag_response | jq -r '.object | "\(.url)"') 
 
           echo "url: $url"
 
@@ -28,7 +26,7 @@ jobs:
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
-          tagger=$(echo $tag_annotations | jq -r '.tagger') 
+          tagger_response=$(echo $tag_annotations | jq -r '.tagger') 
 
-          echo "tagger: $tagger"
+          echo "tagger_response: $tagger_response"
         shell: bash
