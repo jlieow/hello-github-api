@@ -32,10 +32,7 @@ jobs:
 
           echo "tagger_response: $tagger_response"
 
-          # echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
-          # echo 'var<<EOF' >> $GITHUB_OUTPUT
-          # echo "tagger_response=test_tagger_response" >> $GITHUB_OUTPUT
-          # echo 'EOF' >> $GITHUB_OUTPUT
+          echo $tagger_response | jq --arg key name -r '.[$key]'
         shell: bash
 
       # - name: Get output from
