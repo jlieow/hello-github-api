@@ -51,5 +51,9 @@ jobs:
           EOF
           )
 
-          echo "$secrets" | jq -r '.U041VQM5ZTK_AWS_PROFILE_NAME'
+          secret_name=U041VQM5ZTK_AWS_PROFILE_NAME
+
+          echo "secret_name = $secret_name"
+
+          echo "$secrets" | jq -r '."$secret_name"'
         shell: bash
