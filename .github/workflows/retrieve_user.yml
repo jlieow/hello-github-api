@@ -48,5 +48,7 @@ jobs:
 
           secrets=${{ toJson(secrets) }}
 
+          echo $secrets
+
           echo "$secrets" | jq -r '.[] | .U041VQM5ZTK_AWS_PROFILE_NAME'
         shell: bash
