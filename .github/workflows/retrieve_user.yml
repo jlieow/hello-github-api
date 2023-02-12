@@ -45,16 +45,20 @@ jobs:
           echo "user_id: $user_id"
           echo "secrets: $secrets"
 
-          if [ "$env" == "AWS" ]; then
+          if [ "$env" == "aws" ]; then
             echo $secrets | jq --arg key "$user_id_AWS_ACCESS_KEY_ID" -r '.[$key]'
             echo $secrets | jq --arg key "$user_id_AWS_PROFILE_NAME" -r '.[$key]'
             echo $secrets | jq --arg key "$user_id_AWS_SECRET_ACCESS_KEY" -r '.[$key]'
+          fi
 
-          if [ "$env" == "AZ" ]; then
+          if [ "$env" == "az" ]; then
             echo "AZ"
+          fi
 
-          if [ "$env" == "GCP" ]; then
+          if [ "$env" == "gcp" ]; then
             echo "GCP"
+            fi
+
         shell: bash
 
       # - name: Get output from
