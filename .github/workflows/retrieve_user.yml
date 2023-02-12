@@ -44,9 +44,9 @@ jobs:
 
       - name: Get secrets
         run: |
-          echo "secrets: ${{ secrets }}"
+          echo "secrets: ${{ toJson(secrets) }}"
 
-          secrets=${{ secrets }}
+          secrets=${{ toJson(secrets) }}
 
           echo "$secrets" | jq -r '.[] | "\(.name) \(.secret)"' | while read name secret ; do
             echo "name: $name"
