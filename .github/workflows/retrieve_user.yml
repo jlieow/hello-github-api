@@ -45,4 +45,11 @@ jobs:
       - name: Get secrets
         run: |
           echo "secrets: ${{ secrets }}"
+
+          secrets=${{ secrets }}
+
+          echo "$secrets" | jq -r '.[] | "\(.name) \(.secret)"' | while read name secret ; do
+            echo "name: $name"
+            echo "secret: $secret"
+          done
         shell: bash
