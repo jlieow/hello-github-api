@@ -31,12 +31,10 @@ jobs:
           tagger_response=$(echo $tag_annotations | jq -r '.tagger')
           message=$(echo $tag_annotations | jq -r '.message')
 
-          message=toJson($message)
-
           echo "tagger_response: $tagger_response"
           echo "message: $message"
 
-          echo $message | jq --arg key env -r '.[$key]'
+          echo toJson($message) | jq --arg key env -r '.[$key]'
         shell: bash
 
       # - name: Get output from
