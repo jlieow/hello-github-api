@@ -32,7 +32,7 @@ jobs:
 
           echo "tagger_response: $tagger_response"
 
-          echo $tagger_response | jq --arg message env -r '.[$key]'
+          echo $tagger_response | jq --arg key message -r '.[$key]'
         shell: bash
 
       # - name: Get output from
