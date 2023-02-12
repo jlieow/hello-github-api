@@ -13,16 +13,18 @@ jobs:
         run: |
           echo "Tag: ${GITHUB_REF##*/}"
 
+          # Gets Git tag reference which contains an annotated tag object reference
+          # Retrieves URL from annotated tag object reference
+          # Retrieves annotated tag message from the URL which contains a JSON string with the keys "env" and "user_id"
+          # Use "env" value to determine which cloud environment to authenticate to
+          # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
+
           # tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
           tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.26" \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
-          echo "tag_response: $tag_response"
-
           url=$(echo $tag_response | jq -r '.object | "\(.url)"')
-
-          echo "url: $url"
 
           tag_annotations=$(curl "$url" \
           -H "Accept: application/json" \
@@ -31,10 +33,28 @@ jobs:
           tagger_response=$(echo $tag_annotations | jq -r '.tagger')
           message=$(echo $tag_annotations | jq -r '.message')
 
-          echo "tagger_response: $tagger_response"
-          echo "message: $message"
+          env=$(echo $message | jq --arg key env -r '.[$key]')
+          user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
 
-          echo $message | jq --arg key env -r '.[$key]'
+          secrets=$(cat <<EOF
+          ${{ toJson(secrets) }}
+          EOF
+          )
+
+          echo "env: $env"
+          echo "user_id: $user_id"
+          echo "secrets: $secrets"
+
+          if [ "$env" == "AWS" ]; then
+            echo $secrets | jq --arg key "$user_id_AWS_ACCESS_KEY_ID" -r '.[$key]'
+            echo $secrets | jq --arg key "$user_id_AWS_PROFILE_NAME" -r '.[$key]'
+            echo $secrets | jq --arg key "$user_id_AWS_SECRET_ACCESS_KEY" -r '.[$key]'
+
+          if [ "$env" == "AZ" ]; then
+            echo "AZ"
+
+          if [ "$env" == "GCP" ]; then
+            echo "GCP"
         shell: bash
 
       # - name: Get output from
