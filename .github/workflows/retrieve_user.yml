@@ -8,34 +8,35 @@ jobs:
   get_github_details:
     runs-on: ubuntu-latest
     steps:
-      # - name: Get tagger block from tag annotations
-      #   id: tagger
-      #   run: |
-      #     echo "Tag: ${GITHUB_REF##*/}"
+      - name: Get tagger block from tag annotations
+        id: tagger
+        run: |
+          echo "Tag: ${GITHUB_REF##*/}"
 
-      #     tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
-      #     -H "Accept: application/json" \
-      #     -H "Content-Type:application/json")
+          # tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
+          tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.23" \
+          -H "Accept: application/json" \
+          -H "Content-Type:application/json")
 
-      #     echo "tag_response: $tag_response"
+          echo "tag_response: $tag_response"
 
-      #     url=$(echo $tag_response | jq -r '.object | "\(.url)"')
+          url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
-      #     echo "url: $url"
+          echo "url: $url"
 
-      #     tag_annotations=$(curl "$url" \
-      #     -H "Accept: application/json" \
-      #     -H "Content-Type:application/json")
+          tag_annotations=$(curl "$url" \
+          -H "Accept: application/json" \
+          -H "Content-Type:application/json")
 
-      #     tagger_response=$(echo $tag_annotations | jq -r '.tagger')
+          tagger_response=$(echo $tag_annotations | jq -r '.tagger')
 
-      #     echo "tagger_response: $tagger_response"
+          echo "tagger_response: $tagger_response"
 
-      #     # echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
-      #     echo 'var<<EOF' >> $GITHUB_OUTPUT
-      #     echo "tagger_response=test_tagger_response" >> $GITHUB_OUTPUT
-      #     echo 'EOF' >> $GITHUB_OUTPUT
-      #   shell: bash
+          # echo "tagger_response=$tagger_response" >> $GITHUB_OUTPUT
+          # echo 'var<<EOF' >> $GITHUB_OUTPUT
+          # echo "tagger_response=test_tagger_response" >> $GITHUB_OUTPUT
+          # echo 'EOF' >> $GITHUB_OUTPUT
+        shell: bash
 
       # - name: Get output from
       #   run: |
@@ -55,5 +56,5 @@ jobs:
 
           echo "secret_name = $secret_name"
 
-          echo $secrets | jq --arg k $secret_name -r '.[$k]'
+          echo $secrets | jq --arg key $secret_name -r '.[$key]'
         shell: bash
