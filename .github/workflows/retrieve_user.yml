@@ -29,7 +29,7 @@ jobs:
           -H "Content-Type:application/json")
 
           tagger_response=$(echo $tag_annotations | jq -r '.tagger')
-          message=$(echo $tag_annotations | jq -r '.message')
+          message=toJson($(echo $tag_annotations | jq -r '.message'))
 
           echo "tagger_response: $tagger_response"
           echo "message: $message"
