@@ -14,7 +14,7 @@ jobs:
           echo "Tag: ${GITHUB_REF##*/}"
 
           # tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
-          tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.24" \
+          tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.25" \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
 
@@ -32,8 +32,7 @@ jobs:
 
           echo "tagger_response: $tagger_response"
 
-          echo $tagger_response | jq --arg key env -r '.[$key]'
-          echo $tagger_response | jq --arg key user_id -r '.[$key]'
+          echo $tagger_response | jq --arg message env -r '.[$key]'
         shell: bash
 
       # - name: Get output from
