@@ -29,7 +29,7 @@ jobs:
           tag_annotations=$(curl "$url" \
           -H "Accept: application/json" \
           -H "Content-Type:application/json")
-user_id
+
           tagger_response=$(echo $tag_annotations | jq -r '.tagger')
           message=$(echo $tag_annotations | jq -r '.message')
 
