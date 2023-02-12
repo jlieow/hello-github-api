@@ -46,7 +46,7 @@ jobs:
         run: |
           echo "secrets: ${{ toJson(secrets) }}"
 
-          echo ${{ toJson(secrets) }} | jq -r '.[] | "\(.U041VQM5ZTK_AWS_PROFILE_NAME)"'
+          echo "${{ toJson(secrets) }}"" | jq -r '.[] | "\(.U041VQM5ZTK_AWS_PROFILE_NAME)"'
 
           secrets=${{ toJson(secrets) }}
 
