@@ -55,5 +55,5 @@ jobs:
 
           echo "secret_name = $secret_name"
 
-          echo $secrets | jq -r '."$secret_name"'
+          echo $secrets | jq --arg k $secret_name -r '.[$k]'
         shell: bash
