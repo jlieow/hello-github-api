@@ -34,7 +34,7 @@ jobs:
           echo "tagger_response: $tagger_response"
           echo "message: $message"
 
-          # echo $message | jq --arg key env -r '.[$key]'
+          echo $message | jq --arg key env -r '.[$key]'
         shell: bash
 
       # - name: Get output from
