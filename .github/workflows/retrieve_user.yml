@@ -48,7 +48,7 @@ jobs:
 
           secrets=${{ toJson(secrets) }}
 
-          echo "$secrets" | jq -r '.[] | "\(.name) \(.secret)"' | while read name secret ; do
+          echo "$secrets" | jq -r '.[] | "\(.U041VQM5ZTK_AWS_PROFILE_NAME)"' | while read name ; do
             echo "name: $name"
             echo "secret: $secret"
           done
