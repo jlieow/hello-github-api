@@ -29,10 +29,12 @@ jobs:
           -H "Content-Type:application/json")
 
           tagger_response=$(echo $tag_annotations | jq -r '.tagger')
+          message=$(echo $tag_annotations | jq -r '.message')
 
           echo "tagger_response: $tagger_response"
+          echo "message: $message"
 
-          echo $tagger_response | jq --arg key message -r '.[$key]'
+          # echo $tagger_response | jq --arg key message -r '.[$key]'
         shell: bash
 
       # - name: Get output from
