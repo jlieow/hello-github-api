@@ -35,6 +35,7 @@ jobs:
 
           env=$(echo $message | jq --arg key env -r '.[$key]')
           user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
+          dir=$(echo $message | jq --arg key dir -r '.[$key]')
 
           secrets=$(cat <<EOF
           ${{ toJson(secrets) }}
@@ -51,12 +52,16 @@ jobs:
 
           if [ "$env" == "aws" ]; then
             echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]'
             echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]'
+            echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]'
           fi
 
           if [ "$env" == "az" ]; then
             echo "AZ"
+            echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
+            echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_SECRET" -r '.[$key]'
+            echo $secrets | jq --arg key "${user_id}_AZ_TENANT_ID" -r '.[$key]'
+            echo $secrets | jq --arg key "${user_id}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
           fi
 
           if [ "$env" == "gcp" ]; then
