@@ -102,7 +102,7 @@ jobs:
           echo "---ls ec2"
           ls ec2
 
-          sed -i '' 's/profile = ".*"/profile = "replace"/g' ./ec2/backend.tfvars
+          sed -i '' 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
 
-          cat ./ec2/backend.tfvars
+          cat ec2/backend.tfvars
         shell: bash
