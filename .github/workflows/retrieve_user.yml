@@ -96,6 +96,8 @@ jobs:
 
       - name: Replace profile
         run: |
+          ls
+           
           sed -i '' 's/profile = ".*"/profile = "replace"/g' backend.tfvars
 
           cat backend.tfvars
