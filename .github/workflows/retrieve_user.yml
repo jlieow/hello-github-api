@@ -102,6 +102,8 @@ jobs:
           echo "---ls ec2"
           ls ec2
 
+          # sed command works differently in linux and mac. You can omit the '' in linux but not in mac.
+          # Equivalent command in mac is: sed -i '' 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
           sed -i 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
 
           cat ec2/backend.tfvars
