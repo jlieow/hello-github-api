@@ -1,110 +1,110 @@
 name: Get github commit details
 on:
-  push:
-    # tags:
-    #   - "v*"
+    push:
+        tags:
+            - "platform/*/userid/*/terraformx/*/dir/*/v/*"
 
 jobs:
-  get_github_details:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get tagger block from tag annotations
-        id: tagger
-        run: |
-          echo "Tag: ${GITHUB_REF##*/}"
+    get_github_details:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get tagger block from tag annotations
+              id: tagger
+              run: |
+                  echo "Tag: ${GITHUB_REF##*/}"
 
-          # Gets Git tag reference which contains an annotated tag object reference
-          # Retrieves URL from annotated tag object reference
-          # Retrieves annotated tag message from the URL which contains a JSON string with the keys "env" and "user_id"
-          # Use "env" value to determine which cloud environment to authenticate to
-          # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
+                  # Gets Git tag reference which contains an annotated tag object reference
+                  # Retrieves URL from annotated tag object reference
+                  # Retrieves annotated tag message from the URL which contains a JSON string with the keys "env" and "user_id"
+                  # Use "env" value to determine which cloud environment to authenticate to
+                  # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
 
-          # tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
-          tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.26" \
-          -H "Accept: application/json" \
-          -H "Content-Type:application/json")
+                  # tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/}" \
+                  tag_response=$(curl "https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/v0.0.26" \
+                  -H "Accept: application/json" \
+                  -H "Content-Type:application/json")
 
-          url=$(echo $tag_response | jq -r '.object | "\(.url)"')
+                  url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
-          tag_annotations=$(curl "$url" \
-          -H "Accept: application/json" \
-          -H "Content-Type:application/json")
+                  tag_annotations=$(curl "$url" \
+                  -H "Accept: application/json" \
+                  -H "Content-Type:application/json")
 
-          tagger_response=$(echo $tag_annotations | jq -r '.tagger')
-          message=$(echo $tag_annotations | jq -r '.message')
+                  tagger_response=$(echo $tag_annotations | jq -r '.tagger')
+                  message=$(echo $tag_annotations | jq -r '.message')
 
-          env=$(echo $message | jq --arg key env -r '.[$key]')
-          user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
-          dir=$(echo $message | jq --arg key dir -r '.[$key]')
+                  env=$(echo $message | jq --arg key env -r '.[$key]')
+                  user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
+                  dir=$(echo $message | jq --arg key dir -r '.[$key]')
 
-          secrets=$(cat <<EOF
-          ${{ toJson(secrets) }}
-          EOF
-          )
+                  secrets=$(cat <<EOF
+                  ${{ toJson(secrets) }}
+                  EOF
+                  )
 
-          echo "env: $env"
-          echo "user_id: $user_id"
-          echo "secrets: $secrets"
+                  echo "env: $env"
+                  echo "user_id: $user_id"
+                  echo "secrets: $secrets"
 
-          echo "user_id_AWS_ACCESS_KEY_ID: ${user_id}_AWS_ACCESS_KEY_ID"
-          echo "user_id_AWS_PROFILE_NAME: ${user_id}_AWS_PROFILE_NAME"
-          echo "user_id_AWS_SECRET_ACCESS_KEY: ${user_id}_AWS_SECRET_ACCESS_KEY"
+                  echo "user_id_AWS_ACCESS_KEY_ID: ${user_id}_AWS_ACCESS_KEY_ID"
+                  echo "user_id_AWS_PROFILE_NAME: ${user_id}_AWS_PROFILE_NAME"
+                  echo "user_id_AWS_SECRET_ACCESS_KEY: ${user_id}_AWS_SECRET_ACCESS_KEY"
 
-          if [ "$env" == "aws" ]; then
-            echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]'
-          fi
+                  if [ "$env" == "aws" ]; then
+                    echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]'
+                  fi
 
-          if [ "$env" == "az" ]; then
-            echo "AZ"
-            echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_SECRET" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AZ_TENANT_ID" -r '.[$key]'
-            echo $secrets | jq --arg key "${user_id}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
-          fi
+                  if [ "$env" == "az" ]; then
+                    echo "AZ"
+                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_SECRET" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_TENANT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
+                  fi
 
-          if [ "$env" == "gcp" ]; then
-            echo "GCP"
-            fi
+                  if [ "$env" == "gcp" ]; then
+                    echo "GCP"
+                    fi
 
-        shell: bash
+              shell: bash
 
-      # - name: Get output from
-      #   run: |
-      #     echo "tagger is ${{ steps.tagger.outputs.tagger_response }}"
-      #   shell: bash
+            # - name: Get output from
+            #   run: |
+            #     echo "tagger is ${{ steps.tagger.outputs.tagger_response }}"
+            #   shell: bash
 
-      - name: Get secrets
-        run: |
-          echo "secrets: ${{ toJson(secrets) }}"
+            - name: Get secrets
+              run: |
+                  echo "secrets: ${{ toJson(secrets) }}"
 
-          secrets=$(cat <<EOF
-          ${{ toJson(secrets) }}
-          EOF
-          )
+                  secrets=$(cat <<EOF
+                  ${{ toJson(secrets) }}
+                  EOF
+                  )
 
-          secret_name=U041VQM5ZTK_AWS_PROFILE_NAME
+                  secret_name=U041VQM5ZTK_AWS_PROFILE_NAME
 
-          echo "secret_name = $secret_name"
+                  echo "secret_name = $secret_name"
 
-          echo $secrets | jq --arg key $secret_name -r '.[$key]'
-        shell: bash
+                  echo $secrets | jq --arg key $secret_name -r '.[$key]'
+              shell: bash
 
-      - name: Checkout
-        uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
-      - name: Replace profile
-        run: |
-          echo "---ls"
-          ls
+            - name: Replace profile
+              run: |
+                  echo "---ls"
+                  ls
 
-          echo "---ls ec2"
-          ls ec2
+                  echo "---ls ec2"
+                  ls ec2
 
-          # sed command works differently in linux and mac. You can omit the '' in linux but not in mac.
-          # Equivalent command in mac is: sed -i '' 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
-          sed -i 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
+                  # sed command works differently in linux and mac. You can omit the '' in linux but not in mac.
+                  # Equivalent command in mac is: sed -i '' 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
+                  sed -i 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
 
-          cat ec2/backend.tfvars
-        shell: bash
+                  cat ec2/backend.tfvars
+              shell: bash
