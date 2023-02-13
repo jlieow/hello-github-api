@@ -90,3 +90,13 @@ jobs:
 
           echo $secrets | jq --arg key $secret_name -r '.[$key]'
         shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Replace profile
+        run: |
+          sed -i '' 's/profile = ".*"/profile = "replace"/g' backend.tfvars
+
+          cat backend.tfvars
+        shell: bash

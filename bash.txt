@@ -1,0 +1,23 @@
+terraform init -backend-config "profile=sandbox-jerome-1-terraform-admin" -backend-config=backend.tfvars
+export TF_VAR_profile=sandbox_jerome_1_terraform_admin
+
+# Insert string with newline into backend.tfvars
+
+printf "\nprofile = \"test\"" >> backend.tfvars
+
+# Delete line - 1d means line 1
+
+sed '1d' backend.tfvars
+
+# Delete any line that contains the string "the" and outputs the result
+
+sed '/profile =/d' backend.tfvars
+
+# Delete any line that contains the string "profile =" and saves the result to the file
+
+sed -i '' '/profile =/d' backend.tfvars
+
+# Replace the string the string between profile = "' and '"', with the string replace:
+# So from profile = "THE_WORD" to profile = "replace"
+
+sed -i '' 's/profile = ".*"/profile = "replace"/g' backend.tfvars

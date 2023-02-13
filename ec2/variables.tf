@@ -1,7 +1,7 @@
 ## backend.tfvars
 
 variable "profile" {
-  description = "AWS CLI profile = sandbox_jerome_1_terraform_admin"
+  description = "AWS CLI profile name =sandbox_jerome_1_terraform_admin "
 }
 
 variable "region" {
