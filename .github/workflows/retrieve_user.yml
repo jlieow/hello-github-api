@@ -96,7 +96,11 @@ jobs:
 
       - name: Replace profile
         run: |
+          echo "---ls"
           ls
+
+          echo "---ls ec2"
+          ls ec2
 
           sed -i '' 's/profile = ".*"/profile = "replace"/g' ./ec2/backend.tfvars
 
