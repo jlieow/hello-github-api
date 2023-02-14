@@ -1,8 +1,8 @@
 name: Get github commit details
 on:
     push:
-        # tags:
-        #     - "platform/*/userid/*/terraformx/*/dir/*/v/*"
+        tags:
+            - "platform/*/userid/*/terraformx/*/dir/*/v/*"
 
 jobs:
     get_github_details:
@@ -47,9 +47,9 @@ jobs:
                   echo "dir: $dir"
                   echo "secrets: $secrets"
 
-                  echo "user_id_AWS_ACCESS_KEY_ID: ${user_id}_AWS_ACCESS_KEY_ID"
-                  echo "user_id_AWS_PROFILE_NAME: ${user_id}_AWS_PROFILE_NAME"
-                  echo "user_id_AWS_SECRET_ACCESS_KEY: ${user_id}_AWS_SECRET_ACCESS_KEY"
+                  # echo "user_id_AWS_ACCESS_KEY_ID: ${user_id}_AWS_ACCESS_KEY_ID"
+                  # echo "user_id_AWS_PROFILE_NAME: ${user_id}_AWS_PROFILE_NAME"
+                  # echo "user_id_AWS_SECRET_ACCESS_KEY: ${user_id}_AWS_SECRET_ACCESS_KEY"
 
                   if [ "$env" == "aws" ]; then
                     aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
