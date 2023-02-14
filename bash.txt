@@ -17,8 +17,8 @@ sed '/profile =/d' backend.tfvars
 
 sed -i '' '/profile =/d' backend.tfvars
 
-# Replace the string the string between profile = "' and '"', with the string replace:
+# Replace .* which is the string between profile = " and ", with the string replace. Example:
 # So from profile = "THE_WORD" to profile = "replace"
 # Take note that the sed command works differently in linux and mac, so you can omit the -i in the workflow
 
-sed -i '' 's/profile = ".*"/profile = "replace"/g' backend.tfvars
+sed -i '' 's/profile = ".*"/profile = " replace "/g' backend.tfvars
