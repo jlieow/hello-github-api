@@ -1,8 +1,8 @@
 name: Get github commit details
 on:
     push:
-        tags:
-            - "platform/*/userid/*/terraformx/*/dir/*/v/*"
+        # tags:
+        #     - "platform/*/userid/*/terraformx/*/dir/*/v/*"
 
 jobs:
     get_github_details:
