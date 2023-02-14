@@ -56,4 +56,20 @@ jobs:
 
                     echo "profile_name=$profile_name" >> $GITHUB_ENV
                   fi
+
+                  if [ "$env" == "az" ]; then
+                    echo "AZ"
+                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_SECRET" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_TENANT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${user_id}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
+                  fi
+
+                  if [ "$env" == "gcp" ]; then
+                    echo "GCP"
+                  fi
+              shell: bash
+            - name: See if aws profile configured in previous step exists
+              run: |
+                  aws configure list
               shell: bash
