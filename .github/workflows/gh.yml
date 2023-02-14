@@ -47,6 +47,7 @@ jobs:
                   echo "secrets: $secrets"
 
                   if [ "$env" == "aws" ]; then
+                    echo "Running aws configure."
                     aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
                     aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
                     profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
@@ -55,6 +56,7 @@ jobs:
                     aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
 
                     echo "profile_name=$profile_name" >> $GITHUB_ENV
+                    echo "Running aws profile $profile_name configured."
                   fi
 
                   if [ "$env" == "az" ]; then
