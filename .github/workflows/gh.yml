@@ -23,11 +23,11 @@ jobs:
 
                   url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
-                  echo "url : $url"
+                  # echo "url : $url"
 
                   tag_annotations=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET $url)
 
-                  echo "tag_annotations : $tag_annotations"
+                  # echo "tag_annotations : $tag_annotations"
 
                   tagger_response=$(echo $tag_annotations | jq -r '.tagger')
                   message=$(echo $tag_annotations | jq -r '.message')
@@ -45,4 +45,15 @@ jobs:
                   echo "user_id: $user_id"
                   echo "dir: $dir"
                   echo "secrets: $secrets"
+
+                  if [ "$env" == "aws" ]; then
+                    aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
+                    aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
+                    profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
+
+                    aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
+                    aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
+
+                    echo "profile_name=$profile_name" >> $GITHUB_ENV
+                  fi
               shell: bash
