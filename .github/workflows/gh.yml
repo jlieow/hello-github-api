@@ -36,4 +36,13 @@ jobs:
                   user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
                   dir=$(echo $message | jq --arg key dir -r '.[$key]')
 
+                  secrets=$(cat <<EOF
+                  ${{ toJson(secrets) }}
+                  EOF
+                  )
+
+                  echo "env: $env"
+                  echo "user_id: $user_id"
+                  echo "dir: $dir"
+                  echo "secrets: $secrets"
               shell: bash
