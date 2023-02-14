@@ -44,7 +44,7 @@ jobs:
                   echo "env: $env"
                   echo "user_id: $user_id"
                   echo "dir: $dir"
-                  echo "DIR=$dir" >> $GITHUB_ENV
+                  echo "dir=$dir" >> $GITHUB_ENV
                   echo "secrets: $secrets"
 
                   if [ "$env" == "aws" ]; then
@@ -58,7 +58,7 @@ jobs:
 
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
-                    echo "PROFILE_NAME=$profile_name" >> $GITHUB_ENV
+                    echo "profile_name=$profile_name" >> $GITHUB_ENV
                     echo "AWS profile configured."
                   fi
 
@@ -80,34 +80,26 @@ jobs:
 
               shell: bash
 
-            # - name: See if aws profile configured in previous step exists
-            #   run: |
-            #       echo ~./aws
-            #       cat ~/.aws/credentials
-            #   shell: bash
+            - name: See if aws profile configured in previous step exists
+              run: |
+                  echo ~./aws
+                  cat ~/.aws/credentials
+              shell: bash
 
-            # - name: Checkout
-            #   uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
 
-            # - name: Replace profile
-            #   run: |
+            - name: Replace profile
+              run: |
 
-            #       sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
+                  sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
                   
-            #       echo ${{ env.dir }}
-            #   shell: bash
+                  echo ${{ env.dir }}
+              shell: bash
 
-            # - name: Perform Terraformx Apply
-            #   id: terraformx_apply
-            #   uses: jlieow/terraformx_apply@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
-            #   with:
-            #     dir: $DIR # Remember to set the tag dir too
-            #     aws_profiles: |
-            #         [
-            #           {
-            #               "aws_access_key_id": ${{ toJSON(env.aws_access_key_id) }},
-            #               "aws_secret_access_key": ${{ toJSON(env.aws_secret_access_key) }},
-            #               "profile_name": ${{ toJSON(env.profile_name) }}
-            #           }
-            #         ]
+            - name: Perform Terraformx Apply
+              id: terraformx_apply
+              uses: jlieow/terraformx_apply@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                dir: $dir # Remember to set the tag dir too
 
