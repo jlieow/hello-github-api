@@ -44,7 +44,7 @@ jobs:
                   echo "env: $env"
                   echo "user_id: $user_id"
                   echo "dir: $dir"
-                  echo "dir=$dir" >> $GITHUB_ENV
+                  echo "DIR=$dir" >> $GITHUB_ENV
                   echo "secrets: $secrets"
 
                   if [ "$env" == "aws" ]; then
@@ -58,7 +58,7 @@ jobs:
 
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
-                    echo "profile_name=$profile_name" >> $GITHUB_ENV
+                    echo "PROFILE_NAME=$profile_name" >> $GITHUB_ENV
                     echo "AWS profile configured."
                   fi
 
