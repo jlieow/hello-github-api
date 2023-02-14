@@ -74,3 +74,9 @@ jobs:
                   echo ~./aws
                   cat ~/.aws/credentials
               shell: bash
+
+            - name: See if aws profile configured in previous step exists
+              run: |
+                  echo ~./aws
+                  cat ~/.aws/credentials
+              shell: bash
