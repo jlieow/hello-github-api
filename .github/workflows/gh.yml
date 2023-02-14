@@ -54,6 +54,7 @@ jobs:
                     aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
                     aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
                     profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
+                    response_url=$(echo $secrets | jq --arg key "${user_id}_SLACK_RESPONSE_URL" -r '.[$key]')
 
                     aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
                     aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
@@ -61,6 +62,7 @@ jobs:
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
                     echo "profile_name=$profile_name" >> $GITHUB_ENV
+                    echo "response_url=$response_url" >> $GITHUB_ENV
                     echo "AWS profile configured."
                   fi
 
@@ -98,16 +100,9 @@ jobs:
 
             - name: Inform user of completed action
               run: |
-                  secrets=$(cat <<EOF
-                  ${{ toJson(secrets) }}
-                  EOF
-                  )
-                  
-                  response_url=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_RESPONSE_URL" -r '.[$key]')
-
-                  curl --request POST $response_url \
+                  curl --request POST ${{ env.response_url }} \
                   -H "Accept: application/json" \
                   -H "Content-Type:application/json" \
-                  -D '{ "text" : "Terraform provisioned!" }'
+                  -d "{ "text" : "Terraform provisioned!" }""
               shell: bash
 
