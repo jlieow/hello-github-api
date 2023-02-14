@@ -56,9 +56,9 @@ jobs:
                     # aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
                     # aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
 
-                    echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
-                    echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
-                    echo "profile_name=$profile_name" >> $GITHUB_ENV
+                    echo "AWS_ACCESS_KEY_ID=$aws_access_key_id" >> $GITHUB_ENV
+                    echo "AWS_SECRET_ACCESS_KEY=$aws_secret_access_key" >> $GITHUB_ENV
+                    echo "PROFILE_NAME=$profile_name" >> $GITHUB_ENV
                     echo "AWS profile configured."
                   fi
 
@@ -80,11 +80,11 @@ jobs:
 
               shell: bash
 
-            # - name: See if aws profile configured in previous step exists
-            #   run: |
-            #       echo ~./aws
-            #       cat ~/.aws/credentials
-            #   shell: bash
+            - name: See if aws profile configured in previous step exists
+              run: |
+                  echo ~./aws
+                  cat ~/.aws/credentials
+              shell: bash
 
             - name: Checkout
               uses: actions/checkout@v3
@@ -110,9 +110,9 @@ jobs:
                 aws_profiles: |
                   [
                     {
-                      "aws_access_key_id": ${{ env.aws_access_key_id }},
-                      "aws_secret_access_key": ${{ env.aws_secret_access_key }},
-                      "profile_name": ${{ env.profile_name }}
+                      "aws_access_key_id": ${{ env.AWS_ACCESS_KEY_ID }},
+                      "aws_secret_access_key": ${{ env.AWS_SECRET_ACCESS_KEY }},
+                      "profile_name": ${{ env.PROFILE_NAME }}
                     }
                   ]
 
