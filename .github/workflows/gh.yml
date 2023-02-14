@@ -91,7 +91,7 @@ jobs:
 
             - name: Replace profile
               run: |
-                  cat ec2/backend.tfvars | sed 's/./& /g'
+                  cat ec2/backend.tfvars | sed 's/./&/g'
 
                   sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
               shell: bash
@@ -99,9 +99,9 @@ jobs:
             - name: Run terraform init
               working-directory: ec2
               run: |
-                  cat backend.tfvars | sed 's/./& /g'
+                  cat backend.tfvars | sed 's/./&/g'
 
-                  echo "test terraform init"
+                  printf "test terraform init"
 
                   terraform init -backend-config=backend.tfvars
 
