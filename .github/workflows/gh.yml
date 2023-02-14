@@ -91,8 +91,13 @@ jobs:
 
             - name: Replace profile
               run: |
+                  cat ec2/backend.tfvars
+
+                  echo ""
 
                   sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
+
+                  cat ec2/backend.tfvars
                   
                   echo ${{ env.dir }}
               shell: bash
