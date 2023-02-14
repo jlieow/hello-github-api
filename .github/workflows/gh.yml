@@ -23,18 +23,9 @@ jobs:
 
                   url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
-                  # echo "url : $url"
+                  echo "url : $url"
 
-                  tag_annotations=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET $url)
-
-                  # echo "tag_annotations : $tag_annotations"
-
-                  tagger_response=$(echo $tag_annotations | jq -r '.tagger')
-                  message=$(echo $tag_annotations | jq -r '.message')
-
-                  env=$(echo $message | jq --arg key env -r '.[$key]')
-                  user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
-                  dir=$(echo $message | jq --arg key dir -r '.[$key]')
+                  
 
               shell: bash
 
