@@ -68,8 +68,6 @@ jobs:
                   if [ "$env" == "gcp" ]; then
                     echo "GCP"
                   fi
-              shell: bash
-            - name: See if aws profile configured in previous step exists
-              run: |
+
                   aws configure list
               shell: bash
