@@ -19,7 +19,10 @@ jobs:
                   # Use "env" value to determine which cloud environment to authenticate to
                   # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
 
-                  tag_response=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/})
+                  getRefFromTag="https://api.github.com/repos/jlieow/hello-github-api/git/${GITHUB_REF#}"
+                  echo $getRefFromTag
+
+                  tag_response=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET $getRefFromTag)
 
                   url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
