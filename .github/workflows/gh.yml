@@ -110,9 +110,9 @@ jobs:
                 aws_profiles: |
                   [
                     {
-                      "aws_access_key_id": ${{ env.AWS_ACCESS_KEY_ID }},
-                      "aws_secret_access_key": ${{ env.AWS_SECRET_ACCESS_KEY }},
-                      "profile_name": ${{ env.PROFILE_NAME }}
+                      "aws_access_key_id": ${{ toJson(env.AWS_ACCESS_KEY_ID) }},
+                      "aws_secret_access_key": ${{ toJson(env.AWS_SECRET_ACCESS_KEY) }},
+                      "profile_name": ${{ toJson(env.PROFILE_NAME) }}
                     }
                   ]
 
