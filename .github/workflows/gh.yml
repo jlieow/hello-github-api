@@ -105,7 +105,7 @@ jobs:
                   
                   response_url=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_RESPONSE_URL" -r '.[$key]')
 
-                  curl $response_url \
+                  curl POST $response_url \
                   -H "Accept: application/json" \
                   -H "Content-Type:application/json" \
                   -D '{ "text" : "Terraform provisioned!" }'
