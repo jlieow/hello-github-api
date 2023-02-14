@@ -2,7 +2,7 @@ name: Get github commit details
 on:
     push:
         tags:
-            - "platform/*/userid/*/terraformx/*/dir/*/v/*"
+            - "test"
 
 jobs:
     get_github_details:

@@ -1,8 +1,8 @@
 name: Get github commit details
 on:
     push:
-        # tags:
-        #     - "platform/*/userid/*/terraformx/*/dir/*/v/*"
+        tags:
+            - "platform/*/userid/*/terraformx/*/dir/*/v/*"
 
 jobs:
     get_github_details:
@@ -19,7 +19,7 @@ jobs:
                   # Use "env" value to determine which cloud environment to authenticate to
                   # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
 
-                  tag_response=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/platform/slack/userid/U041VQM5ZTK/terraformx/apply/dir/ec2/v/3)
+                  tag_response=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET https://api.github.com/repos/jlieow/hello-github-api/git/refs/tags/${GITHUB_REF##*/})
 
                   url=$(echo $tag_response | jq -r '.object | "\(.url)"')
 
@@ -42,6 +42,7 @@ jobs:
                   EOF
                   )
 
+                  echo "user_id=$user_id" >> $GITHUB_ENV
                   echo "dir=$dir" >> $GITHUB_ENV
                   echo "response_url=$response_url" >> $GITHUB_ENV
 
@@ -99,9 +100,9 @@ jobs:
                   EOF
                   )
                   
-                  response_url=$(echo $secrets | jq --arg key "${user_id}_SLACK_RESPONSE_URL" -r '.[$key]')
+                  response_url=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_RESPONSE_URL" -r '.[$key]')
 
-                  curl ${{ secret.response_url }} \
+                  curl $response_url \
                   -H "Accept: application/json" \
                   -H "Content-Type:application/json" \
                   -D '{ "text" : "Terraform provisioned!" }'
