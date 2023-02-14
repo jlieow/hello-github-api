@@ -53,8 +53,8 @@ jobs:
                     aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
                     profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
 
-                    # aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
-                    # aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
+                    aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
+                    aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
 
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
@@ -96,21 +96,25 @@ jobs:
                   sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
               shell: bash
             
-            - name: Replace profile2
+            - name: Run terraform init
+              working-directory: ec2
               run: |
-                  cat ec2/backend.tfvars
+                  cat backend.tfvars
 
-            - name: Perform Terraformx Apply
-              id: terraformx_apply
-              uses: jlieow/terraformx_apply@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
-              with:
-                dir: ${{ env.dir }} # Remember to set the tag dir too
-                aws_profiles: |
-                  [
-                    {
-                      "aws_access_key_id": ${{ toJson(env.aws_access_key_id) }},
-                      "aws_secret_access_key": ${{ toJson(env.aws_secret_access_key) }},
-                      "profile_name": ${{ toJson(env.profile_name) }}
-                    }
-                  ]
+                  echo "test terraform init"
+                  terraform init -backend-config=backend.tfvars
+
+            # - name: Perform Terraformx Apply
+            #   id: terraformx_apply
+            #   uses: jlieow/terraformx_apply@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+            #   with:
+            #     dir: ${{ env.dir }} # Remember to set the tag dir too
+            #     aws_profiles: |
+            #       [
+            #         {
+            #           "aws_access_key_id": ${{ toJson(env.aws_access_key_id) }},
+            #           "aws_secret_access_key": ${{ toJson(env.aws_secret_access_key) }},
+            #           "profile_name": ${{ toJson(env.profile_name) }}
+            #         }
+            #       ]
 
