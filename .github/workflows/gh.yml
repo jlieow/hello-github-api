@@ -56,9 +56,9 @@ jobs:
                     # aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
                     # aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
 
-                    echo "AWS_ACCESS_KEY_ID=$aws_access_key_id" >> $GITHUB_ENV
-                    echo "AWS_SECRET_ACCESS_KEY=$aws_secret_access_key" >> $GITHUB_ENV
-                    echo "PROFILE_NAME=$profile_name" >> $GITHUB_ENV
+                    echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
+                    echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
+                    echo "profile_name=$profile_name" >> $GITHUB_ENV
                     echo "AWS profile configured."
                   fi
 
@@ -93,14 +93,12 @@ jobs:
               run: |
                   cat ec2/backend.tfvars
 
-                  echo ""
-
-                  sed -i 's/profile = ".*"/profile = "${{ env.PROFILE_NAME }}"/g' ec2/backend.tfvars
-
-                  cat ec2/backend.tfvars
-                  
-                  echo ${{ env.dir }}
+                  sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
               shell: bash
+            
+            - name: Replace profile2
+              run: |
+                  cat ec2/backend.tfvars
 
             - name: Perform Terraformx Apply
               id: terraformx_apply
@@ -110,9 +108,9 @@ jobs:
                 aws_profiles: |
                   [
                     {
-                      "aws_access_key_id": ${{ toJson(env.AWS_ACCESS_KEY_ID) }},
-                      "aws_secret_access_key": ${{ toJson(env.AWS_SECRET_ACCESS_KEY) }},
-                      "profile_name": ${{ toJson(env.PROFILE_NAME) }}
+                      "aws_access_key_id": ${{ toJson(env.aws_access_key_id) }},
+                      "aws_secret_access_key": ${{ toJson(env.aws_secret_access_key) }},
+                      "profile_name": ${{ toJson(env.profile_name) }}
                     }
                   ]
 
