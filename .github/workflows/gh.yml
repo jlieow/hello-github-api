@@ -53,8 +53,8 @@ jobs:
                     aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
                     profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
 
-                    # aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
-                    # aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
+                    aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
+                    aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
 
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
@@ -80,27 +80,13 @@ jobs:
 
               shell: bash
 
-            # - name: See if aws profile configured in previous step exists
-            #   run: |
-            #       echo ~./aws
-            #       cat ~/.aws/credentials
-            #   shell: bash
-
             - name: Checkout
               uses: actions/checkout@v3
 
             - name: Replace profile
               run: |
-                  cat ec2/backend.tfvars
-
-                  echo ""
-
                   sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
               shell: bash
-            
-            - name: Replace profile
-              run: |
-                  cat ec2/backend.tfvars
 
             - name: Perform Terraformx Apply
               id: terraformx_apply
