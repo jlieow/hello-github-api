@@ -103,6 +103,6 @@ jobs:
                   curl --request POST ${{ env.response_url }} \
                   -H "Accept: application/json" \
                   -H "Content-Type:application/json" \
-                  -d "{ "text" : "Terraform provisioned!" }""
+                  -d "{ \"text\" : \"Terraform provisioned!\" }"
               shell: bash
 
