@@ -106,11 +106,11 @@ jobs:
               with:
                 dir: ${{ env.dir }} # Remember to set the tag dir too
                 aws_profiles: |
-                  [
-                    {
-                        "aws_access_key_id": toJSON(${{ env.aws_access_key_id) }},
-                        "aws_secret_access_key": toJSON(${{ env.aws_secret_access_key) }},
-                        "profile_name": toJSON(${{ env.profile_name) }}
-                    }
-                  ]
+                    [
+                      {
+                          "aws_access_key_id": ${{ toJSON(env.aws_access_key_id) }},
+                          "aws_secret_access_key": ${{ toJSON(env.aws_secret_access_key) }},
+                          "profile_name": ${{ toJSON(env.profile_name) }}
+                      }
+                    ]
 
