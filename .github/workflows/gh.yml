@@ -94,6 +94,8 @@ jobs:
                   sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
 
                   cat ec2/backend.tfvars
+
+                  ls
               shell: bash
 
             - name: Perform Terraformx Apply
