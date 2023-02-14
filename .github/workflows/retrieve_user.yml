@@ -72,7 +72,7 @@ jobs:
 
                   if [ "$env" == "gcp" ]; then
                     echo "GCP"
-                    fi
+                  fi
 
               shell: bash
 
