@@ -40,32 +40,4 @@ jobs:
                   ${{ toJson(secrets) }}
                   EOF
                   )
-
-                  echo "env: $env"
-                  echo "user_id: $user_id"
-                  echo "dir: $dir"
-                  echo "secrets: $secrets"
               shell: bash
-
-            # - name: See if aws profile configured in previous step exists
-            #   run: |
-            #       aws configure list
-            #   shell: bash
-
-            # - name: Checkout
-            #   uses: actions/checkout@v3
-
-            # - name: Replace profile
-            #   run: |
-            #       echo "--- get aws profile: ${{ env.profile_name }}"
-
-            #       echo "--- backend.tfvars before replacing string"
-            #       cat ec2/backend.tfvars
-
-            #       # sed command works differently in linux and mac. You can omit the '' in linux but not in mac.
-            #       # Equivalent command in mac is: sed -i '' 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
-            #       sed -i 's/profile = ".*"/profile = "replace"/g' ec2/backend.tfvars
-
-            #       echo "-- backend.tfvars after replacing string"
-            #       cat ec2/backend.tfvars
-            #   shell: bash
