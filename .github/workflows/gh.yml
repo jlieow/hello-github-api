@@ -95,7 +95,7 @@ jobs:
 
                   echo ""
 
-                  sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
+                  sed -i 's/profile = ".*"/profile = "${{ env.PROFILE_NAME }}"/g' ec2/backend.tfvars
 
                   cat ec2/backend.tfvars
                   
