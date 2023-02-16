@@ -38,7 +38,6 @@ jobs:
                   env=$(echo $message | jq --arg key env -r '.[$key]')
                   user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
                   dir=$(echo $message | jq --arg key dir -r '.[$key]')
-                  response_url=$(echo $message | jq --arg key response_url -r '.[$key]')
 
                   secrets=$(cat <<EOF
                   ${{ toJson(secrets) }}
@@ -47,14 +46,15 @@ jobs:
 
                   echo "user_id=$user_id" >> $GITHUB_ENV
                   echo "dir=$dir" >> $GITHUB_ENV
-                  echo "response_url=$response_url" >> $GITHUB_ENV
 
                   if [ "$env" == "aws" ]; then
                     echo "Running aws configure."
+
                     aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
                     aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
                     profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
-                    response_url=$(echo $secrets | jq --arg key "${user_id}_SLACK_RESPONSE_URL" -r '.[$key]')
+                    slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${user_id}_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
+                    slack_channel_id=$(echo $secrets | jq --arg key "${user_id}_SLACK_CHANNEL_ID" -r '.[$key]')
 
                     aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
                     aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
@@ -62,7 +62,9 @@ jobs:
                     echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
                     echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
                     echo "profile_name=$profile_name" >> $GITHUB_ENV
-                    echo "response_url=$response_url" >> $GITHUB_ENV
+                    echo "slack_bot_user_oauth_token=$slack_bot_user_oauth_token" >> $GITHUB_ENV
+                    echo "slack_channel_id=$slack_channel_id" >> $GITHUB_ENV
+
                     echo "AWS profile configured."
                   fi
 
@@ -98,11 +100,12 @@ jobs:
               with:
                 dir: ${{ env.dir }} # Remember to set the tag dir too
 
-            - name: Inform user of completed action
+            - name: Inform Slack user of completed action
               run: |
-                  curl --request POST ${{ env.response_url }} \
+                  curl --request POST https://slack.com/api/chat.postMessage \
                   -H "Accept: application/json" \
-                  -H "Content-Type:application/json" \
-                  -d "{ \"text\" : \"Terraform provisioned!\" }"
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}"
+                  -d "{ \"text\" : \"Terraform provisioned!\", \"channel\" : \"${{ env.slack_channel_id }}\" }"
               shell: bash
 
