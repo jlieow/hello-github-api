@@ -102,9 +102,10 @@ jobs:
 
             - name: Inform Slack user of completed action
               run: |
-                  curl --request POST "https://slack.com/api/chat.postMessage?channel=${{ env.slack_channel_id }}" \
+                  curl --request POST https://slack.com/api/chat.postMessage \
                   -H "Content-Type: application/json" \
                   -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}"
-                  -d "{ \"text\" : \"Terraform provisioned!\" }"
+                  --form 'channel="${{ env.slack_channel_id }}"' \
+                  --form 'text="test"'
               shell: bash
 
