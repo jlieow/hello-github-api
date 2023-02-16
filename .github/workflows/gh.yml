@@ -105,7 +105,7 @@ jobs:
                   curl --request POST https://slack.com/api/chat.postMessage \
                   -H "Content-Type: application/json" \
                   -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}"
-                  -F 'channel="${{ env.slack_channel_id }}"' \
-                  -F 'text="test"'
+                  -F channel="${{ env.slack_channel_id }}" \
+                  -F text="test"
               shell: bash
 
