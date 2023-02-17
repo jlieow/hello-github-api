@@ -35,26 +35,38 @@ jobs:
                   tagger_response=$(echo $tag_annotations | jq -r '.tagger')
                   message=$(echo $tag_annotations | jq -r '.message')
 
-                  env=$(echo $message | jq --arg key env -r '.[$key]')
+                  cloud_env=$(echo $message | jq --arg key env -r '.[$key]')
                   user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
                   dir=$(echo $message | jq --arg key dir -r '.[$key]')
 
+                  echo "cloud_env=${cloud_env^^}" >> $GITHUB_ENV
+                  echo "user_id=$user_id" >> $GITHUB_ENV
+                  echo "dir=$dir" >> $GITHUB_ENV
+              shell: bash
+            
+            - name: Inform Slack user that workflow has started
+              run: |
+                  curl --request POST https://slack.com/api/chat.postMessage \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}" \
+                  -d "{ \"text\" : \"Workflow run here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}!\", \"channel\" : \"${{ env.slack_channel_id }}\" }"
+              shell: bash
+            
+            - name: Log in to respective Cloud
+              run: |
                   secrets=$(cat <<EOF
                   ${{ toJson(secrets) }}
                   EOF
                   )
 
-                  echo "user_id=$user_id" >> $GITHUB_ENV
-                  echo "dir=$dir" >> $GITHUB_ENV
-
-                  if [ "${env^^}" == "AWS" ]; then
+                  if [ "${{ env.cloud_env }}" == "AWS" ]; then
                     echo "Running aws configure."
 
-                    aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
-                    aws_secret_access_key=$(echo $secrets | jq --arg key "${user_id}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
-                    profile_name=$(echo $secrets | jq --arg key "${user_id}_AWS_PROFILE_NAME" -r '.[$key]')
-                    slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${user_id}_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
-                    slack_channel_id=$(echo $secrets | jq --arg key "${user_id}_SLACK_CHANNEL_ID" -r '.[$key]')
+                    aws_access_key_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_ACCESS_KEY_ID" -r '.[$key]')
+                    aws_secret_access_key=$(echo $secrets | jq --arg key "${{ env.user_id }_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
+                    profile_name=$(echo $secrets | jq --arg key "${{ env.user_id }_AWS_PROFILE_NAME" -r '.[$key]')
+                    slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${{ env.user_id }_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
+                    slack_channel_id=$(echo $secrets | jq --arg key "${{ env.user_id }_SLACK_CHANNEL_ID" -r '.[$key]')
 
                     aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
                     aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
@@ -68,30 +80,21 @@ jobs:
                     echo "AWS profile configured."
                   fi
 
-                  if [ "${env^^}" == "AZURE" ]; then
+                  if [ "${{ env.cloud_env }}" == "AZURE" ]; then
                     echo "Running az login."
 
-                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
-                    echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_SECRET" -r '.[$key]'
-                    echo $secrets | jq --arg key "${user_id}_AZ_TENANT_ID" -r '.[$key]'
-                    echo $secrets | jq --arg key "${user_id}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${{ env.user_id }_AZ_CLIENT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${{ env.user_id }_AZ_CLIENT_SECRET" -r '.[$key]'
+                    echo $secrets | jq --arg key "${{ env.user_id }_AZ_TENANT_ID" -r '.[$key]'
+                    echo $secrets | jq --arg key "${{ env.user_id }_AZ_SUBSCRIPTION_ID" -r '.[$key]'
 
                     echo "Logged in."
                   fi
 
-                  if [ "${env^^}" == "GCP" ]; then
+                  if [ "${{ env.cloud_env }}" == "GCP" ]; then
                     echo "Running gcp auth."
                     echo "Authenticated through gcp auth."
                   fi
-
-              shell: bash
-            
-            - name: Inform Slack user that workflow has started
-              run: |
-                  curl --request POST https://slack.com/api/chat.postMessage \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}" \
-                  -d "{ \"text\" : \"Workflow run here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}!\", \"channel\" : \"${{ env.slack_channel_id }}\" }"
               shell: bash
 
             - name: Checkout
