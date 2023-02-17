@@ -59,7 +59,7 @@ jobs:
                   EOF
                   )
 
-                  if [ "${{ env.cloud_env^^}}" == "AWS" ]; then
+                  if [ "${{ env.cloud_env^^ }}" == "AWS" ]; then
                     echo "Running aws configure."
 
                     aws_access_key_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_ACCESS_KEY_ID" -r '.[$key]')
@@ -80,7 +80,7 @@ jobs:
                     echo "AWS profile configured."
                   fi
 
-                  if [ "${{ env.cloud_env^^}}" == "AZURE" ]; then
+                  if [ "${{ env.cloud_env^^ }}" == "AZURE" ]; then
                     echo "Running az login."
 
                     echo $secrets | jq --arg key "${{ env.user_id }_AZ_CLIENT_ID" -r '.[$key]'
@@ -91,7 +91,7 @@ jobs:
                     echo "Logged in."
                   fi
 
-                  if [ "${{ env.cloud_env^^}}" == "GCP" ]; then
+                  if [ "${{ env.cloud_env^^ }}" == "GCP" ]; then
                     echo "Running gcp auth."
                     echo "Authenticated through gcp auth."
                   fi
