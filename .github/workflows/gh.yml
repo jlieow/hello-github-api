@@ -55,7 +55,7 @@ jobs:
                   slack_channel_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_CHANNEL_ID" -r '.[$key]')
 
                   curl --request POST https://slack.com/api/chat.postMessage \
-                  -H "Content-Type: application/json" \
+                  -H "Content-type: application/json; charset=utf-8" \
                   -H "Authorization: Bearer $slack_bot_user_oauth_token" \
                   -d "{ \"text\" : \"Workflow run started! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\", \"channel\" : \"$slack_channel_id\" }"
 
@@ -121,7 +121,7 @@ jobs:
             - name: Inform Slack user of completed action
               run: |
                   curl --request POST https://slack.com/api/chat.postMessage \
-                  -H "Content-Type: application/json" \
+                  -H "Content-type: application/json; charset=utf-8" \
                   -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}" \
                   -d "{ \"text\" : \"Terraform provisioned!\", \"channel\" : \"${{ env.slack_channel_id }}\" }"
               shell: bash
