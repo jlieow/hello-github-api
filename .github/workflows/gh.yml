@@ -47,7 +47,7 @@ jobs:
                   echo "user_id=$user_id" >> $GITHUB_ENV
                   echo "dir=$dir" >> $GITHUB_ENV
 
-                  if [ "$env" == "AWS" ]; then
+                  if [ "${env^^}" == "AWS" ]; then
                     echo "Running aws configure."
 
                     aws_access_key_id=$(echo $secrets | jq --arg key "${user_id}_AWS_ACCESS_KEY_ID" -r '.[$key]')
@@ -68,7 +68,7 @@ jobs:
                     echo "AWS profile configured."
                   fi
 
-                  if [ "$env" == "AZURE" ]; then
+                  if [ "${env^^}" == "AZURE" ]; then
                     echo "Running az login."
 
                     echo $secrets | jq --arg key "${user_id}_AZ_CLIENT_ID" -r '.[$key]'
@@ -79,7 +79,7 @@ jobs:
                     echo "Logged in."
                   fi
 
-                  if [ "$env" == "GCP" ]; then
+                  if [ "${env^^}" == "GCP" ]; then
                     echo "Running gcp auth."
                     echo "Authenticated through gcp auth."
                   fi
