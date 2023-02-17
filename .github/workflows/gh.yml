@@ -85,6 +85,14 @@ jobs:
                   fi
 
               shell: bash
+            
+            - name: Inform Slack user that workflow has started
+              run: |
+                  curl --request POST https://slack.com/api/chat.postMessage \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer ${{ env.slack_bot_user_oauth_token }}" \
+                  -d "{ \"text\" : \"Workflow run here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}!\", \"channel\" : \"${{ env.slack_channel_id }}\" }"
+              shell: bash
 
             - name: Checkout
               uses: actions/checkout@v3
