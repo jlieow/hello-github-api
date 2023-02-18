@@ -44,7 +44,7 @@ jobs:
                   echo "dir=$dir" >> $GITHUB_ENV
               shell: bash
             
-            - name: Inform Slack user that workflow has started
+            - name: Save Slack secrets to env
               run: |
                   secrets=$(cat <<EOF
                   ${{ toJson(secrets) }}
@@ -54,14 +54,17 @@ jobs:
                   slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
                   slack_channel_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_CHANNEL_ID" -r '.[$key]')
 
-                  curl --request POST https://slack.com/api/chat.postMessage \
-                  -H "Content-type: application/json; charset=utf-8" \
-                  -H "Authorization: Bearer $slack_bot_user_oauth_token" \
-                  -d "{ \"text\" : \"Workflow run started! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\", \"channel\" : \"$slack_channel_id\" }"
-
                   echo "slack_bot_user_oauth_token=$slack_bot_user_oauth_token" >> $GITHUB_ENV
                   echo "slack_channel_id=$slack_channel_id" >> $GITHUB_ENV
               shell: bash
+              
+            - name: Informs Slack user that workflow has started
+              id: slack_message
+              uses: jlieow/slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
+                slack_channel_id: ${{ env.slack_channel_id }}
+                message: "Workflow run started! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
             
             - name: Log in to respective Cloud
               run: |
