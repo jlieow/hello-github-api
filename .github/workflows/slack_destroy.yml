@@ -1,0 +1,120 @@
+name: Get github commit details
+on:
+    push:
+        tags:
+            - "platform/slack/userid/*/terraformx/destroy/dir/*/v/*"
+
+jobs:
+    get_github_details:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get tag annotation and retrieve secrets
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              id: tagger
+              run: |
+                  # Gets Git tag reference which contains an annotated tag object reference
+                  # Retrieves URL from annotated tag object reference
+                  # Retrieves annotated tag message from the URL which contains a JSON string with the keys "env" and "user_id"
+                  # Use "env" value to determine which cloud environment to authenticate to
+                  # Use the "user_id" value to retrieve the credentials and sign into the cloud environment
+
+                  getRefFromTag="https://api.github.com/repos/jlieow/hello-github-api/git/${GITHUB_REF#}"
+                  echo $getRefFromTag
+
+                  tag_response=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET $getRefFromTag)
+
+                  url=$(echo $tag_response | jq -r '.object | "\(.url)"')
+
+                  # echo "url : $url"
+
+                  tag_annotations=$(gh api --header 'Accept: application/vnd.github+json' --header 'X-GitHub-Api-Version:2022-11-28' --method GET $url)
+
+                  # echo "tag_annotations : $tag_annotations"
+
+                  tagger_response=$(echo $tag_annotations | jq -r '.tagger')
+                  message=$(echo $tag_annotations | jq -r '.message')
+
+                  cloud_env=$(echo $message | jq --arg key env -r '.[$key]')
+                  user_id=$(echo $message | jq --arg key user_id -r '.[$key]')
+                  dir=$(echo $message | jq --arg key dir -r '.[$key]')
+
+                  echo "cloud_env=${cloud_env^^}" >> $GITHUB_ENV
+                  echo "user_id=$user_id" >> $GITHUB_ENV
+                  echo "dir=$dir" >> $GITHUB_ENV
+              shell: bash
+            
+            - name: Save Secrets to ENV
+              run: |
+                  secrets=$(cat <<EOF
+                  ${{ toJson(secrets) }}
+                  EOF
+                  )
+
+                  # Slack Secrets
+                  slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
+                  slack_channel_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_CHANNEL_ID" -r '.[$key]')
+
+                  echo "slack_bot_user_oauth_token=$slack_bot_user_oauth_token" >> $GITHUB_ENV
+                  echo "slack_channel_id=$slack_channel_id" >> $GITHUB_ENV
+
+                  # AWS Secrets
+                  aws_access_key_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_ACCESS_KEY_ID" -r '.[$key]')
+                  aws_secret_access_key=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
+                  profile_name=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_PROFILE_NAME" -r '.[$key]')
+
+                  echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
+                  echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
+                  echo "profile_name=$profile_name" >> $GITHUB_ENV
+
+                  # AZURE Secrets
+                  az_client_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_ID" -r '.[$key]')
+                  az_client_secret=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_SECRET" -r '.[$key]')
+                  az_tenant_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_TENANT_ID" -r '.[$key]')
+                  az_subscription_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_SUBSCRIPTION_ID" -r '.[$key]')
+
+                  echo "az_client_id=$az_client_id" >> $GITHUB_ENV
+                  echo "az_client_secret=$az_client_secret" >> $GITHUB_ENV
+                  echo "az_tenant_id=$az_tenant_id" >> $GITHUB_ENV
+                  echo "az_subscription_id=$az_subscription_id" >> $GITHUB_ENV
+              shell: bash
+              
+            - name: Informs Slack user that workflow has started
+              id: message_workflow_started
+              uses: jlieow/action_slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
+                slack_channel_id: ${{ env.slack_channel_id }}
+                message: "Resources are being provisioned! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+            - name: Logs in to respective Cloud
+              id: cloud_login
+              uses: jlieow/action_cloud_login@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                cloud_env: ${{ env.cloud_env }}
+                aws_access_key_id: ${{ env.aws_access_key_id }}
+                aws_secret_access_key: ${{ env.aws_secret_access_key }}
+                profile_name: ${{ env.profile_name }}
+
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Replace profile
+              run: |
+                  sed -i 's/profile = ".*"/profile = "${{ env.profile_name }}"/g' ec2/backend.tfvars
+              shell: bash
+
+            - name: Perform Terraformx Destroy
+              id: terraformx_destroy
+              uses: jlieow/terraformx_destroy@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                dir: ${{ env.dir }} # Remember to set the tag dir too
+            
+            - name: Inform Slack user workflow has completed
+              id: message_workflow_complete
+              uses: jlieow/action_slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
+                slack_channel_id: ${{ env.slack_channel_id }}
+                message: "Terraform provisioned!"
+
