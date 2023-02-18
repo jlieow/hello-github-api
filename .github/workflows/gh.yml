@@ -60,7 +60,7 @@ jobs:
               
             - name: Informs Slack user that workflow has started
               id: message_workflow_started
-              uses: jlieow/slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              uses: jlieow/action_slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
               with:
                 slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
                 slack_channel_id: ${{ env.slack_channel_id }}
@@ -123,7 +123,7 @@ jobs:
             
             - name: Inform Slack user workflow has completed
               id: message_workflow_complete
-              uses: jlieow/slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              uses: jlieow/action_slack_post_message@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
               with:
                 slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
                 slack_channel_id: ${{ env.slack_channel_id }}
