@@ -44,18 +44,39 @@ jobs:
                   echo "dir=$dir" >> $GITHUB_ENV
               shell: bash
             
-            - name: Save Slack secrets to env
+            - name: Save Secrets to ENV
               run: |
                   secrets=$(cat <<EOF
                   ${{ toJson(secrets) }}
                   EOF
                   )
 
+                  # Slack Secrets
                   slack_bot_user_oauth_token=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_BOT_USER_OAUTH_TOKEN" -r '.[$key]')
                   slack_channel_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_SLACK_CHANNEL_ID" -r '.[$key]')
 
                   echo "slack_bot_user_oauth_token=$slack_bot_user_oauth_token" >> $GITHUB_ENV
                   echo "slack_channel_id=$slack_channel_id" >> $GITHUB_ENV
+
+                  # AWS Secrets
+                  aws_access_key_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_ACCESS_KEY_ID" -r '.[$key]')
+                  aws_secret_access_key=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
+                  profile_name=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_PROFILE_NAME" -r '.[$key]')
+
+                  echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
+                  echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
+                  echo "profile_name=$profile_name" >> $GITHUB_ENV
+
+                  # AZURE Secrets
+                  az_client_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_ID" -r '.[$key]')
+                  az_client_secret=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_SECRET" -r '.[$key]')
+                  az_tenant_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_TENANT_ID" -r '.[$key]')
+                  az_subscription_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AZ_SUBSCRIPTION_ID" -r '.[$key]')
+
+                  echo "az_client_id=$az_client_id" >> $GITHUB_ENV
+                  echo "az_client_secret=$az_client_secret" >> $GITHUB_ENV
+                  echo "az_tenant_id=$az_tenant_id" >> $GITHUB_ENV
+                  echo "az_subscription_id=$az_subscription_id" >> $GITHUB_ENV
               shell: bash
               
             - name: Informs Slack user that workflow has started
@@ -65,47 +86,15 @@ jobs:
                 slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
                 slack_channel_id: ${{ env.slack_channel_id }}
                 message: "Workflow run started! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-            
-            - name: Log in to respective Cloud
-              run: |
-                  secrets=$(cat <<EOF
-                  ${{ toJson(secrets) }}
-                  EOF
-                  )
 
-                  if [ "${{ env.cloud_env }}" == "AWS" ]; then
-                    echo "Running aws configure."
-
-                    aws_access_key_id=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_ACCESS_KEY_ID" -r '.[$key]')
-                    aws_secret_access_key=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_SECRET_ACCESS_KEY" -r '.[$key]')
-                    profile_name=$(echo $secrets | jq --arg key "${{ env.user_id }}_AWS_PROFILE_NAME" -r '.[$key]')
-
-                    aws configure set aws_access_key_id $aws_access_key_id --profile $profile_name
-                    aws configure set aws_secret_access_key $aws_secret_access_key --profile $profile_name
-
-                    echo "aws_access_key_id=$aws_access_key_id" >> $GITHUB_ENV
-                    echo "aws_secret_access_key=$aws_secret_access_key" >> $GITHUB_ENV
-                    echo "profile_name=$profile_name" >> $GITHUB_ENV
-
-                    echo "AWS profile configured."
-                  fi
-
-                  if [ "${{ env.cloud_env }}" == "AZURE" ]; then
-                    echo "Running az login."
-
-                    echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_ID" -r '.[$key]'
-                    echo $secrets | jq --arg key "${{ env.user_id }}_AZ_CLIENT_SECRET" -r '.[$key]'
-                    echo $secrets | jq --arg key "${{ env.user_id }}_AZ_TENANT_ID" -r '.[$key]'
-                    echo $secrets | jq --arg key "${{ env.user_id }}_AZ_SUBSCRIPTION_ID" -r '.[$key]'
-
-                    echo "Logged in."
-                  fi
-
-                  if [ "${{ env.cloud_env }}" == "GCP" ]; then
-                    echo "Running gcp auth."
-                    echo "Authenticated through gcp auth."
-                  fi
-              shell: bash
+            - name: Logs in to respective Cloud
+              id: cloud_login
+              uses: jlieow/action_cloud_login@V1 # Uses an action in the repo terraformx_apply owned by jlieow tagged as V1
+              with:
+                cloud_env: ${{ env.slack_bot_user_oauth_token }}
+                aws_access_key_id: ${{ env.aws_access_key_id }}
+                aws_secret_access_key: ${{ env.aws_secret_access_key }}
+                profile_name: ${{ env.profile_name }}
 
             - name: Checkout
               uses: actions/checkout@v3
