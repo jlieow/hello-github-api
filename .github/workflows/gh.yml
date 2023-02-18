@@ -85,7 +85,7 @@ jobs:
               with:
                 slack_bot_user_oauth_token: ${{ env.slack_bot_user_oauth_token }}
                 slack_channel_id: ${{ env.slack_channel_id }}
-                message: "Workflow run started! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+                message: "Resources are being provisioned! See status here: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
             - name: Logs in to respective Cloud
               id: cloud_login
