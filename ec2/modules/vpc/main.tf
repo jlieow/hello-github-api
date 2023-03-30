@@ -7,14 +7,14 @@ resource "aws_vpc" "spoke-vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "spoke-vpc"
+    Name = "deployed-by-gitops-vpc"
   }
 }
 
 resource "aws_security_group" "helloSpokeSecurityGroup" {
   
   tags = {
-    Name = "helloSpokeSecurityGroup"
+    Name = "deployed-by-gitops-helloSpokeSecurityGroup"
   }
 
   vpc_id = aws_vpc.spoke-vpc.id
@@ -60,6 +60,6 @@ resource "aws_internet_gateway" "spoke-igw" {
   vpc_id = aws_vpc.spoke-vpc.id
 
   tags = {
-    Name = "hellospokeIGW"
+    Name = "deployed-by-gitops-hellospokeIGW"
   }
 }

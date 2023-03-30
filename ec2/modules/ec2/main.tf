@@ -19,7 +19,7 @@ resource "aws_instance" "vm" {
   instance_type = "t2.micro"
 
   tags = {
-    Name = var.vm_name
+    Name = "deployed-by-gitops-${var.vm_name}"
   }
 
   key_name = "helloKeyPair"

@@ -5,6 +5,6 @@ resource "aws_subnet" "spoke-subnet-a" {
   availability_zone = var.spoke_subnet.a.availability_zone
 
   tags = {
-    Name = "${var.spoke_subnet.a.name}"
+    Name = "deployed-by-gitops-${var.spoke_subnet.a.name}"
   }
 }

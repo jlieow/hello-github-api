@@ -35,10 +35,10 @@ module "vm-1" {
   vm_name = "vm-1"
 }
 
-module "vm-2" {
-  source = "./modules/ec2"
+# module "vm-2" {
+#   source = "./modules/ec2"
   
-  spoke-vpc-security-group-id = module.vpc.spoke-vpc-security-group-id
-  spoke-subnet-a-id = module.subnet.spoke-subnet-a-id
-  vm_name = "vm-2"
-}
+#   spoke-vpc-security-group-id = module.vpc.spoke-vpc-security-group-id
+#   spoke-subnet-a-id = module.subnet.spoke-subnet-a-id
+#   vm_name = "vm-2"
+# }
